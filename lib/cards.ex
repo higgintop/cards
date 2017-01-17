@@ -29,4 +29,32 @@ defmodule Cards do
   def contains?(deck, card) do
     Enum.member?(deck, card)
   end
+
+  def deal(deck, hand_size) do
+    # Split list into two lists
+    # Enum.split Returns a Tuple
+    Enum.split(deck, hand_size)
+  end
+
+  def save(deck, filename) do
+    # Calling out Erlang code
+    # :erlang has a lot of methods we can use
+    binary = :erlang.term_to_binary(deck)
+    File.write(filename, binary)
+  end
+
+  def load(filename) do
+    case File.read(filename) do
+      {:ok, binary} -> :erlang.binary_to_term(binary)
+      # _reason is a variable, but we don't want to use it
+      # so put underscore in front of the name
+      {:error, _reason} -> "That file does not exist"
+    end
+  end
+
+  do create_hand(hand_size) do
+    Cards.create_deck
+    |> Cards.shuffle
+    |> Cards.deal(hand_size)
+  end
 end
